@@ -44,11 +44,16 @@ const Separator: React.FC<{top: number; active: boolean}> = ({
   return <View style={getStyle()} />;
 };
 
+export interface PartViewProps {
+  onNext: () => void;
+}
+
 export type StepConfig = {
   id: string;
   completed: boolean;
   stepNumber: number;
   stepTitle: string;
+  partView: React.FC<PartViewProps>;
 };
 
 interface MultiStepIndicatorsProps {
@@ -90,7 +95,7 @@ const StepList: React.FC<MultiStepIndicatorsProps> = ({
         contentContainerStyle={styles.content}
         renderItem={({item}) => (
           <Pressable
-            disabled={true}
+            disabled={false}
             onPress={() => onStepPressed(item.stepNumber)}>
             <StepIndicator
               width={STEP_WIDTH}
