@@ -11,12 +11,15 @@ const styles = StyleSheet.create({
 import {Onboarding} from './src/Onboarding';
 import {OnboardingViewConfig} from './src/OnboardingViewConfig';
 import {OnboardingStepConfig} from './src/OnboardingConfig';
+import {MD3LightTheme, PaperProvider} from 'react-native-paper';
 
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={'dark-content'} />
-      <Onboarding steps={OnboardingStepConfig} views={OnboardingViewConfig} />
+      <PaperProvider theme={MD3LightTheme}>
+        <Onboarding steps={OnboardingStepConfig} views={OnboardingViewConfig} />
+      </PaperProvider>
     </SafeAreaView>
   );
 };

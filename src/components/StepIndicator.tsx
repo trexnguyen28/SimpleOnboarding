@@ -1,21 +1,15 @@
 import React from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  ViewStyle,
-  StyleProp,
-  TextStyle,
-} from 'react-native';
+import {Text, View, StyleSheet, StyleProp, TextStyle} from 'react-native';
 import Svg, {Circle} from 'react-native-svg';
-import {Colors, fontStyles} from '@themes';
 import {VSpace} from './VSpace';
+import {MD3Theme, useTheme} from 'react-native-paper';
+import {ICheck} from '../assets';
 
 interface StepIndicatorProps {
+  title: string;
   width?: number;
   radius?: number;
   active?: boolean;
-  title: string;
   stepNumber: number;
   completed?: boolean;
 }
@@ -26,58 +20,48 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    ...fontStyles.Body2,
-    color: Colors.Text,
-    textAlign: 'center',
-  },
 });
 
 const StepIndicator: React.FC<StepIndicatorProps> = ({
   title,
-  stepNumber = 0,
   width = 80,
   radius = 18,
+  stepNumber = 0,
   active = false,
   completed = false,
 }) => {
-  const getContainerStyle = () => {
-    return {minWidth: width, alignItems: 'center'} as StyleProp<ViewStyle>;
-  };
+  const theme = useTheme<MD3Theme>();
 
-  const getCircleProps = () => {
-    return {
-      r: radius,
-      strokeWidth: 1,
-      fill: completed || active ? Colors.Button.Primary : Colors.Background,
-      stroke: completed || active ? Colors.Primary : Colors.Border.Dark,
-    };
-  };
-
-  const getStepTextStyle = () => {
-    return {
-      ...fontStyles.Body2,
-      color: completed || active ? Colors.Button.PrimaryText : Colors.Text,
-    };
+  const circleProps = {
+    r: radius,
+    strokeWidth: 1,
+    fill: completed || active ? theme.colors.primary : theme.colors.background,
+    stroke:
+      completed || active ? theme.colors.primary : theme.colors.surfaceDisabled,
   };
 
   const textStyle = {
-    ...fontStyles.Body2,
     textAlign: 'center',
-    color: completed || active ? Colors.Primary : Colors.Text,
+    color: completed || active ? theme.colors.primary : 'black',
   } as StyleProp<TextStyle>;
 
   return (
-    <View style={getContainerStyle()}>
+    <View style={{minWidth: width, alignItems: 'center'}}>
       <View>
         <Svg width={(radius + 1) * 2} height={(radius + 1) * 2}>
-          <Circle cx={'50%'} cy={'50%'} {...getCircleProps()} />
+          <Circle cx={'50%'} cy={'50%'} {...circleProps} />
         </Svg>
         <View style={styles.indicatorContainer}>
-          <Text style={getStepTextStyle()}>{stepNumber}</Text>
+          {completed ? (
+            <ICheck fill={'white'} />
+          ) : (
+            <Text style={{color: active ? 'white' : theme.colors.primary}}>
+              {stepNumber}
+            </Text>
+          )}
         </View>
       </View>
-      <VSpace value={8} />
+      <VSpace />
       <Text style={textStyle}>{title}</Text>
     </View>
   );

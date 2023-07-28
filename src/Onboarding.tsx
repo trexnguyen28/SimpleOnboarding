@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import PagerView from 'react-native-pager-view';
 import {StyleSheet, View} from 'react-native';
-import {StepList} from './components/StepList';
+import {StepOverview} from './components/StepOverview';
 import {OnboardingProps, StepModel, StepId} from './OnboardingTypes';
 import {OnboardingContext, OnboardingDefaultState} from './OnboardingContext';
 import {findStepConfigIndexById, findViewConfigById} from './utils';
@@ -59,11 +59,11 @@ const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
     <OnboardingContext.Provider
       value={{onboardData, setOnboardData: setStepData}}>
       <View style={styles.container}>
-        {/*<StepList*/}
-        {/*  configs={STEP_CONFIGS}*/}
-        {/*  onStepPressed={gotoStep}*/}
-        {/*  activeStep={currentStep + 1}*/}
-        {/*/>*/}
+        <StepOverview
+          configs={steps}
+          curStepId={curStepId}
+          onStepPressed={gotoStep}
+        />
         <PagerView
           ref={pagerRef}
           initialPage={0}

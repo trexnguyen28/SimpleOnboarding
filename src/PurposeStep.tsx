@@ -74,7 +74,9 @@ const PurposeStep: React.FC<StepViewProps> = ({
               contentStyle={styles.btnContent}
               onPress={() => onToggle(purpose, isSelected)}
               icon={() =>
-                isSelected ? <ICheck width={25} height={25} /> : null
+                isSelected ? (
+                  <ICheck width={25} height={25} fill={'black'} />
+                ) : null
               }>
               {purpose.label}
             </Button>
