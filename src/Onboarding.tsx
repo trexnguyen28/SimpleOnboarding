@@ -77,22 +77,19 @@ const Onboarding = () => {
         scrollEnabled={false}
         initialPage={INITIAL_PAGE}
         style={styles.pager}>
-        {STEP_CONFIGS.map(item => {
+        {STEP_CONFIGS.map((item, i: number) => {
           const WorkerOnboardingPartView = item.partView;
           //
           return (
             <View key={item.id}>
-              <WorkerOnboardingPartView onNext={() => {}} />
+              <WorkerOnboardingPartView
+                onNext={onNext}
+                isFinalPart={i === STEP_CONFIGS.length - 1}
+              />
             </View>
           );
         })}
       </PagerView>
-      <Button
-        style={{marginHorizontal: 16}}
-        mode={'contained'}
-        onPress={onNext}>
-        <Text style={{color: 'white'}}>NEXT</Text>
-      </Button>
     </View>
   );
 };

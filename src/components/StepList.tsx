@@ -46,6 +46,7 @@ const Separator: React.FC<{top: number; active: boolean}> = ({
 
 export interface PartViewProps {
   onNext: () => void;
+  isFinalPart: boolean;
 }
 
 export type StepConfig = {
