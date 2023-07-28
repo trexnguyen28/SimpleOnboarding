@@ -6,8 +6,9 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 import {VSpace} from '@components';
 
-import {OnboardingContext} from './OnboardingContext';
-import {AdditionalInfo, StepViewProps} from './OnboardingTypes';
+import {Context} from '../context';
+import {AdditionalInfo, StepViewProps} from '../types';
+import {EMAIL_PATTERN, VN_PHONE_PATTERN} from '../constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,18 +24,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const VN_PHONE_PATTERN = /^0(\d{9})$/;
-
-const EMAIL_PATTERN =
-  /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+([\.-]?[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
 const AdditionalStep: React.FC<StepViewProps> = ({
   id,
   onNext,
   isFinal,
   onFinish,
 }) => {
-  const {onboardData, setOnboardData} = useContext(OnboardingContext);
+  const {onboardData, setOnboardData} = useContext(Context);
   const {
     control,
     setValue,

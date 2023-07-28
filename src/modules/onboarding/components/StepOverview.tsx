@@ -7,10 +7,10 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import {MD3Theme, useTheme} from 'react-native-paper';
-
+//
 import {StepIndicator} from './StepIndicator';
+import {StepConfig, StepId} from '../types';
 import {findStepConfigIndexById} from '../utils';
-import {StepConfig, StepId} from '../OnboardingTypes';
 
 const styles = StyleSheet.create({
   content: {

@@ -1,4 +1,4 @@
-import {StepConfig, StepViewConfig} from '../OnboardingTypes';
+import {StepConfig, StepViewConfig} from './types';
 
 export const findStepConfigIndexById = (
   stepId: string,

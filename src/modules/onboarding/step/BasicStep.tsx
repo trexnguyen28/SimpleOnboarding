@@ -4,8 +4,10 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import {Button, HelperText, TextInput} from 'react-native-paper';
 
 import {VSpace} from '@components';
-import {OnboardingContext} from './OnboardingContext';
-import {BasicInfo, StepViewProps} from './OnboardingTypes';
+
+import {Context} from '../context';
+import {BasicInfo, StepViewProps} from '../types';
+import {VN_ID_REGEX} from '../constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,15 +20,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const VN_ID_REGEX = /^(\d{9}|\d{12})$/;
-
 const BasicStep: React.FC<StepViewProps> = ({
   id,
   onNext,
   isFinal,
   onFinish,
 }) => {
-  const {onboardData, setOnboardData} = useContext(OnboardingContext);
+  const {onboardData, setOnboardData} = useContext(Context);
 
   const {
     control,

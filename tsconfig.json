@@ -5,9 +5,9 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "paths": {
+      "@assets": ["assets"],
       "@components": ["components"],
-      "@themes": ["themes"],
-      "@types": ["types"]
+      "@modules": ["modules"]
     }
   }
 }

@@ -1,10 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import PagerView from 'react-native-pager-view';
 import {StyleSheet, View} from 'react-native';
-import {StepOverview} from './components/StepOverview';
-import {OnboardingProps, StepModel, StepId} from './OnboardingTypes';
-import {OnboardingContext, OnboardingDefaultState} from './OnboardingContext';
+//
+import {StepOverview} from './components';
+import {OnboardingProps, StepModel, StepId} from './types';
+import {Context} from './context';
 import {findStepConfigIndexById, findViewConfigById} from './utils';
+import {ONBOARD_DEFAULT_STATE} from './constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,7 +23,7 @@ const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
   const [curStepId, setCurStepId] = useState(
     steps.length > 0 ? steps[0].id : 'basic',
   );
-  const [onboardData, setOnboardData] = useState(OnboardingDefaultState);
+  const [onboardData, setOnboardData] = useState(ONBOARD_DEFAULT_STATE);
 
   const setStepData = (id: StepId, stepData: StepModel) => {
     setOnboardData(prev => ({...prev, [id]: stepData}));
@@ -56,8 +58,7 @@ const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
   }, [onboardData]);
 
   return (
-    <OnboardingContext.Provider
-      value={{onboardData, setOnboardData: setStepData}}>
+    <Context.Provider value={{onboardData, setOnboardData: setStepData}}>
       <View style={styles.container}>
         <StepOverview
           configs={steps}
@@ -90,7 +91,7 @@ const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
           })}
         </PagerView>
       </View>
-    </OnboardingContext.Provider>
+    </Context.Provider>
   );
 };
 

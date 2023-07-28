@@ -1,9 +1,9 @@
 import React from 'react';
 import {Text, View, StyleSheet, StyleProp, TextStyle} from 'react-native';
 import Svg, {Circle} from 'react-native-svg';
-import {VSpace} from './VSpace';
+import {VSpace} from '@components';
 import {MD3Theme, useTheme} from 'react-native-paper';
-import {ICheck} from '../assets';
+import {ICheck} from '@assets';
 
 interface StepIndicatorProps {
   title: string;

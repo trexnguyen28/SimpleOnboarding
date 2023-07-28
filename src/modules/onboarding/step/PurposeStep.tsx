@@ -2,10 +2,11 @@ import React, {useContext, useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Button, HelperText} from 'react-native-paper';
 //
-import {ICheck} from './assets';
-import {OnboardingContext} from './OnboardingContext';
-import {OnboardingPurposeConfig} from './OnboardingConfig';
-import {Option, PurposeInfo, StepViewProps} from './OnboardingTypes';
+import {ICheck} from '@assets';
+//
+import {Context} from '../context';
+import {ONBOARD_PURPOSE_LIST} from '../constants';
+import {Option, PurposeInfo, StepViewProps} from '../types';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,7 +35,7 @@ const PurposeStep: React.FC<StepViewProps> = ({
   isFinal,
   onFinish,
 }) => {
-  const {onboardData, setOnboardData} = useContext(OnboardingContext);
+  const {onboardData, setOnboardData} = useContext(Context);
   const [selected, setSelected] = useState(onboardData[id] as PurposeInfo);
 
   const onToggle = (purpose: Option, isSelected: boolean) => {
@@ -63,7 +64,7 @@ const PurposeStep: React.FC<StepViewProps> = ({
         <HelperText variant={'titleMedium'} type={'info'}>
           Please let us know your purposes:
         </HelperText>
-        {OnboardingPurposeConfig.map(purpose => {
+        {ONBOARD_PURPOSE_LIST.map(purpose => {
           const isSelected = selected.some(x => x.id === purpose.id);
           //
           return (
