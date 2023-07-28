@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface BasicInfo {
   fullName: string;
   idNumber: string;
@@ -29,10 +31,24 @@ export interface OnboardingContextPayload {
   setOnboardData: (id: StepId, data: StepModel) => void;
 }
 
+export interface OnboardingProps {
+  steps: Array<StepConfig>;
+  views: Array<StepViewConfig>;
+}
+
 export interface StepViewProps {
   id: StepId;
   isFinal: boolean;
-  isActive: boolean;
   onNext: () => void;
   onFinish: () => void;
+}
+
+export interface StepConfig {
+  id: StepId;
+  title: string;
+}
+
+export interface StepViewConfig {
+  id: StepId;
+  view: React.FC<StepViewProps>;
 }

@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {Button, Text, TextInput} from 'react-native-paper';
-import {VSpace} from './components/VSpace';
+import React, {useContext, useState} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {Button, HelperText, TextInput} from 'react-native-paper';
 import {Controller, useForm} from 'react-hook-form';
-import {StepViewProps} from './components/StepList';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+
+import {VSpace} from '@components';
+
+import {OnboardingContext} from './OnboardingContext';
+import {AdditionalInfo, StepViewProps} from './OnboardingTypes';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,22 +18,31 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  error: {
+    paddingHorizontal: 0,
+  },
 });
 
-const AdditionalStep: React.FC<StepViewProps> = ({onNext, isFinal}) => {
+const VN_PHONE_PATTERN = /^0(\d{9})$/;
+
+const EMAIL_PATTERN =
+  /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+([\.-]?[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+const AdditionalStep: React.FC<StepViewProps> = ({
+  id,
+  onNext,
+  isFinal,
+  onFinish,
+}) => {
+  const {onboardData, setOnboardData} = useContext(OnboardingContext);
   const {
     control,
     setValue,
+    setFocus,
     getValues,
     handleSubmit,
     formState: {errors},
-  } = useForm({
-    defaultValues: {
-      email: '',
-      phoneNumber: '',
-      dateOfBirth: '',
-    },
-  });
+  } = useForm({defaultValues: {...onboardData[id]} as AdditionalInfo});
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -42,44 +54,73 @@ const AdditionalStep: React.FC<StepViewProps> = ({onNext, isFinal}) => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (date: Date) => {
+  const onDatePickerConfirm = (date: Date) => {
     setValue('dateOfBirth', date.toDateString());
     hideDatePicker();
   };
 
+  const onSubmitSuccess = (data: AdditionalInfo) => {
+    setOnboardData(id, data);
+    if (isFinal) {
+      onFinish();
+    } else {
+      onNext();
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView keyboardDismissMode={'on-drag'} style={styles.content}>
         <Controller
+          name={'email'}
           control={control}
-          rules={{required: true}}
-          render={({field: {onChange, onBlur, value}}) => (
+          rules={{required: true, pattern: EMAIL_PATTERN}}
+          render={({field: {...props}}) => (
             <TextInput
-              value={value}
-              onBlur={onBlur}
-              mode={'outlined'}
               label={'Email'}
-              onChangeText={onChange}
+              mode={'outlined'}
+              returnKeyType={'next'}
+              error={!!errors.email}
+              onChangeText={props.onChange}
+              keyboardType={'email-address'}
+              onSubmitEditing={() => setFocus('phoneNumber')}
+              {...props}
             />
           )}
-          name={'email'}
         />
-        <VSpace value={8} />
+        {errors.email ? (
+          <HelperText style={styles.error} type={'error'}>
+            {errors.email.type === 'required'
+              ? 'Email can not be empty'
+              : 'Invalid email format'}
+          </HelperText>
+        ) : null}
+        <VSpace />
         <Controller
+          name={'phoneNumber'}
           control={control}
-          rules={{required: true}}
-          render={({field: {onChange, onBlur, value}}) => (
+          rules={{required: true, pattern: VN_PHONE_PATTERN}}
+          render={({field: {...props}}) => (
             <TextInput
-              value={value}
-              onBlur={onBlur}
               mode={'outlined'}
               label={'Phone Number'}
-              onChangeText={onChange}
+              returnKeyType={'next'}
+              keyboardType={'number-pad'}
+              error={!!errors.phoneNumber}
+              onChangeText={props.onChange}
+              onSubmitEditing={() => openDatePicker()}
+              {...props}
             />
           )}
-          name={'phoneNumber'}
         />
-        <VSpace value={8} />
+        {errors.phoneNumber ? (
+          <HelperText style={styles.error} type={'error'}>
+            {errors.phoneNumber.type === 'required'
+              ? 'Phone number can not be empty'
+              : 'Invalid Vietnamese phone number format'}
+          </HelperText>
+        ) : null}
+        <VSpace />
         <Controller
           control={control}
           rules={{required: true}}
@@ -90,26 +131,32 @@ const AdditionalStep: React.FC<StepViewProps> = ({onNext, isFinal}) => {
               mode={'outlined'}
               label={'Date of birth'}
               onPressOut={openDatePicker}
+              error={!!errors.dateOfBirth}
             />
           )}
           name={'dateOfBirth'}
         />
-      </View>
-      <Button mode={'contained'} onPress={onNext}>
-        <Text style={{color: 'white'}}>NEXT</Text>
+        {errors.dateOfBirth ? (
+          <HelperText style={styles.error} type={'error'}>
+            Date of birth can not be empty
+          </HelperText>
+        ) : null}
+      </ScrollView>
+      <Button mode={'contained'} onPress={handleSubmit(onSubmitSuccess)}>
+        {isFinal ? 'Complete' : 'Next'}
       </Button>
       <DateTimePickerModal
         mode={'date'}
+        textColor={'black'}
+        isDarkModeEnabled={false}
+        onConfirm={onDatePickerConfirm}
+        onCancel={hideDatePicker}
+        isVisible={isDatePickerVisible}
         date={
           getValues('dateOfBirth')
             ? new Date(getValues('dateOfBirth'))
             : undefined
         }
-        isDarkModeEnabled={false}
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        isVisible={isDatePickerVisible}
-        textColor={'black'}
       />
     </View>
   );

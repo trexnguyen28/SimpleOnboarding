@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const VN_ID_REGEX = /^(\d{9}|\d{12})$/;
+const VN_ID_REGEX = /^(\d{9}|\d{12})$/;
 
 const BasicStep: React.FC<StepViewProps> = ({
   id,
@@ -37,7 +37,6 @@ const BasicStep: React.FC<StepViewProps> = ({
 
   const onSubmitSuccess = (data: BasicInfo) => {
     setOnboardData(id, data);
-    //
     if (isFinal) {
       onFinish();
     } else {
@@ -90,12 +89,12 @@ const BasicStep: React.FC<StepViewProps> = ({
           <HelperText style={{paddingHorizontal: 0}} type={'error'}>
             {errors.idNumber.type === 'required'
               ? 'Id number can not be empty'
-              : 'Invalid id format'}
+              : 'Invalid Vietnamese id format'}
           </HelperText>
         ) : null}
       </ScrollView>
       <Button mode={'contained'} onPress={handleSubmit(onSubmitSuccess)}>
-        NEXT
+        {isFinal ? 'Complete' : 'Next'}
       </Button>
     </View>
   );

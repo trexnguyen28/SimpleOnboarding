@@ -9,12 +9,14 @@ const styles = StyleSheet.create({
 });
 
 import {Onboarding} from './src/Onboarding';
+import {OnboardingViewConfig} from './src/OnboardingViewConfig';
+import {OnboardingStepConfig} from './src/OnboardingConfig';
 
 const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={'dark-content'} />
-      <Onboarding />
+      <Onboarding steps={OnboardingStepConfig} views={OnboardingViewConfig} />
     </SafeAreaView>
   );
 };

@@ -1,12 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {StepConfig, StepList} from './components/StepList';
-import {BasicStep} from './BasicStep';
-import {AdditionalStep} from './AdditionalStep';
-import {PurposeStep} from './PurposeStep';
 import PagerView from 'react-native-pager-view';
+import {StyleSheet, View} from 'react-native';
+import {StepList} from './components/StepList';
+import {OnboardingProps, StepModel, StepId} from './OnboardingTypes';
 import {OnboardingContext, OnboardingDefaultState} from './OnboardingContext';
-import {StepModel, StepId} from './OnboardingTypes';
+import {findStepConfigIndexById, findViewConfigById} from './utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,65 +15,41 @@ const styles = StyleSheet.create({
   },
 });
 
-const INITIAL_PAGE = 0;
-
-const STEP_CONFIGS: Array<StepConfig> = [
-  {
-    id: 'basic',
-    stepNumber: 1,
-    completed: false,
-    stepTitle: 'Basic',
-    stepView: BasicStep,
-  },
-  {
-    id: 'additional',
-    stepNumber: 2,
-    completed: false,
-    stepTitle: 'Additional',
-    stepView: AdditionalStep,
-  },
-  {
-    id: 'purpose',
-    stepNumber: 3,
-    completed: false,
-    stepTitle: 'Purpose',
-    stepView: PurposeStep,
-  },
-];
-
-const Onboarding = () => {
+const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
   const pagerRef = useRef<PagerView>(null);
   //
-  const [currentPage, setCurrentPage] = useState(INITIAL_PAGE);
+  const [curStepId, setCurStepId] = useState(
+    steps.length > 0 ? steps[0].id : 'basic',
+  );
   const [onboardData, setOnboardData] = useState(OnboardingDefaultState);
 
   const setStepData = (id: StepId, stepData: StepModel) => {
     setOnboardData(prev => ({...prev, [id]: stepData}));
   };
 
-  // TODO Check here
-  const gotoPage = (stepNumber: number) => {
+  const gotoStep = (stepId: StepId) => {
     if (pagerRef && pagerRef.current) {
-      setCurrentPage(stepNumber - 1);
-      pagerRef.current.setPage(stepNumber - 1);
+      const iStep = findStepConfigIndexById(stepId, steps);
+      //
+      if (iStep > -1) {
+        setCurStepId(stepId);
+        pagerRef.current.setPage(iStep);
+      }
     }
   };
 
   const onNext = () => {
-    if (currentPage < STEP_CONFIGS.length - 1) {
-      gotoPage(currentPage + 2);
+    const iCurStep = findStepConfigIndexById(curStepId, steps);
+    //
+    if (iCurStep < steps.length - 1) {
+      const nextStepId = steps[iCurStep + 1].id;
+      gotoStep(nextStepId);
     }
   };
 
   const onFinish = () => {
-    // Do something
+    console.log('Do something');
   };
-
-  useEffect(() => {
-    if (pagerRef && pagerRef.current) {
-      pagerRef.current.setPage(currentPage);
-    }
-  }, [currentPage]);
 
   useEffect(() => {
     console.log({data: onboardData});
@@ -85,28 +59,32 @@ const Onboarding = () => {
     <OnboardingContext.Provider
       value={{onboardData, setOnboardData: setStepData}}>
       <View style={styles.container}>
-        <StepList
-          configs={STEP_CONFIGS}
-          onStepPressed={gotoPage}
-          activeStep={currentPage + 1}
-        />
+        {/*<StepList*/}
+        {/*  configs={STEP_CONFIGS}*/}
+        {/*  onStepPressed={gotoStep}*/}
+        {/*  activeStep={currentStep + 1}*/}
+        {/*/>*/}
         <PagerView
           ref={pagerRef}
+          initialPage={0}
           scrollEnabled={false}
-          initialPage={INITIAL_PAGE}
           keyboardDismissMode={'on-drag'}
           style={styles.pager}>
-          {STEP_CONFIGS.map((item, i: number) => {
-            const StepView = item.stepView;
-            //
+          {steps.map((step, i: number) => {
+            const ViewConfig = findViewConfigById(step.id, views);
+            const isFinal = i === steps.length - 1;
+
+            if (!ViewConfig) {
+              return null;
+            }
+
             return (
-              <StepView
-                id={item.id}
-                key={item.id}
+              <ViewConfig.view
+                id={step.id}
+                key={step.id}
                 onNext={onNext}
+                isFinal={isFinal}
                 onFinish={onFinish}
-                isActive={currentPage === i}
-                isFinal={i === STEP_CONFIGS.length - 1}
               />
             );
           })}

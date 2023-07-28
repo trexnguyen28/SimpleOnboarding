@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {Button, HelperText, Text} from 'react-native-paper';
+import {Button, HelperText} from 'react-native-paper';
+//
 import {ICheck} from './assets';
-import {StepViewProps} from './components/StepList';
+import {OnboardingContext} from './OnboardingContext';
+import {OnboardingPurposeConfig} from './OnboardingConfig';
+import {Option, PurposeInfo, StepViewProps} from './OnboardingTypes';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,28 +19,40 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  btnContent: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+  },
+  label: {
+    flex: 1,
+    textAlign: 'left',
+  },
 });
+const PurposeStep: React.FC<StepViewProps> = ({
+  id,
+  onNext,
+  isFinal,
+  onFinish,
+}) => {
+  const {onboardData, setOnboardData} = useContext(OnboardingContext);
+  const [selected, setSelected] = useState(onboardData[id] as PurposeInfo);
 
-type PURPOSE_OPTION = {id: string; label: string};
-
-const PURPOSE_LIST: Array<PURPOSE_OPTION> = [
-  {id: 'money', label: 'Money transfer'},
-  {id: 'pay', label: 'Payment'},
-  {id: 'bill', label: 'Bill payment'},
-  {id: 'loan', label: 'Loan'},
-  {id: 'investment', label: 'Investment'},
-  {id: 'saving', label: 'Saving'},
-];
-
-const PurposeStep: React.FC<StepViewProps> = ({onNext}) => {
-  const [selected, setSelected] = useState<Array<string>>([]);
-
-  const onUnSelect = (id: string) => {
-    setSelected(prev => prev.filter(x => x !== id));
+  const onToggle = (purpose: Option, isSelected: boolean) => {
+    if (isSelected) {
+      setSelected(prev => prev.filter(x => x.id !== purpose.id));
+    } else {
+      setSelected(prev => [...prev, purpose]);
+    }
   };
 
-  const onSelect = (id: string) => {
-    setSelected(prev => [...prev, id]);
+  const onSubmit = () => {
+    setOnboardData(id, selected);
+    //
+    if (isFinal) {
+      onFinish();
+    } else {
+      onNext();
+    }
   };
 
   return (
@@ -48,37 +63,29 @@ const PurposeStep: React.FC<StepViewProps> = ({onNext}) => {
         <HelperText variant={'titleMedium'} type={'info'}>
           Please let us know your purposes:
         </HelperText>
-        {PURPOSE_LIST.map((x: PURPOSE_OPTION) => {
-          const isSelected = selected.includes(x.id);
-
-          const onPress = () => {
-            if (isSelected) {
-              onUnSelect(x.id);
-            } else {
-              onSelect(x.id);
-            }
-          };
-
+        {OnboardingPurposeConfig.map(purpose => {
+          const isSelected = selected.some(x => x.id === purpose.id);
+          //
           return (
             <Button
-              key={x.id}
-              onPress={onPress}
+              key={purpose.id}
+              labelStyle={styles.label}
               rippleColor={'transparent'}
-              labelStyle={{flex: 1, textAlign: 'left'}}
-              contentStyle={{
-                flexDirection: 'row-reverse',
-                alignItems: 'center',
-              }}
+              contentStyle={styles.btnContent}
+              onPress={() => onToggle(purpose, isSelected)}
               icon={() =>
                 isSelected ? <ICheck width={25} height={25} /> : null
               }>
-              {x.label}
+              {purpose.label}
             </Button>
           );
         })}
       </ScrollView>
-      <Button mode={'contained'} onPress={onNext}>
-        <Text style={{color: 'white'}}>NEXT</Text>
+      <Button
+        onPress={onSubmit}
+        mode={'contained'}
+        disabled={selected.length === 0}>
+        {isFinal ? 'Complete' : 'Next'}
       </Button>
     </View>
   );
