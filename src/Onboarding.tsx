@@ -1,18 +1,22 @@
-import React, {useCallback, useRef, useState} from 'react';
-import {
-  InteractionManager,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import {StepConfig, StepList} from './components/StepList';
-import {OnboardingPartList} from './components/OnboardingPartList';
+import {BasicStep} from './BasicStep';
+import {AdditionalStep} from './AdditionalStep';
+import {PurposeStep} from './PurposeStep';
+import PagerView from 'react-native-pager-view';
+import {Button, Text} from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  pager: {
+    flex: 1,
+  },
 });
+
+const INITIAL_PAGE = 0;
 
 const STEP_CONFIGS: Array<StepConfig> = [
   {
@@ -20,60 +24,75 @@ const STEP_CONFIGS: Array<StepConfig> = [
     stepNumber: 1,
     completed: false,
     stepTitle: 'Basic',
-    partView: () => <View style={{height: 200, backgroundColor: 'red'}} />,
+    partView: BasicStep,
   },
   {
     id: '2',
     stepNumber: 2,
     completed: false,
     stepTitle: 'Additional',
-    partView: () => <View style={{height: 300, backgroundColor: 'blue'}} />,
+    partView: AdditionalStep,
   },
   {
     id: '3',
     stepNumber: 3,
     completed: false,
     stepTitle: 'Purpose',
-    partView: () => <View style={{height: 400, backgroundColor: 'yellow'}} />,
+    partView: PurposeStep,
   },
 ];
 
 const Onboarding = () => {
-  const listRef = useRef<any>();
-  const dimensions = useWindowDimensions();
-  const [activeStep, setActiveStep] = useState(1);
+  const pagerRef = useRef<PagerView>(null);
+  const [currentPage, setCurrentPage] = useState(INITIAL_PAGE);
 
-  const gotoPage = useCallback(
-    (stepNumber: number) => {
-      console.log({stepNumber});
-      setActiveStep(stepNumber);
-      //
-      if (listRef && listRef.current) {
-        InteractionManager.runAfterInteractions(() => {
-          listRef.current.scrollTo({
-            x: (stepNumber - 1) * dimensions.width,
-            animated: true,
-            y: 0,
-          });
-        });
-      }
-    },
-    [dimensions.width],
-  );
+  const gotoPage = useCallback((stepNumber: number) => {
+    if (pagerRef && pagerRef.current) {
+      setCurrentPage(stepNumber - 1);
+      pagerRef.current.setPage(stepNumber - 1);
+    }
+  }, []);
+
+  const onNext = () => {
+    if (currentPage < STEP_CONFIGS.length - 1) {
+      gotoPage(currentPage + 2);
+    }
+  };
+
+  useEffect(() => {
+    if (pagerRef && pagerRef.current) {
+      pagerRef.current.setPage(currentPage);
+    }
+  }, [currentPage]);
 
   return (
     <View style={styles.container}>
       <StepList
         configs={STEP_CONFIGS}
-        activeStep={activeStep}
         onStepPressed={gotoPage}
+        activeStep={currentPage + 1}
       />
-      <OnboardingPartList
-        ref={listRef}
-        goToPage={gotoPage}
-        steps={STEP_CONFIGS}
-        currentStep={activeStep}
-      />
+      <PagerView
+        ref={pagerRef}
+        scrollEnabled={false}
+        initialPage={INITIAL_PAGE}
+        style={styles.pager}>
+        {STEP_CONFIGS.map(item => {
+          const WorkerOnboardingPartView = item.partView;
+          //
+          return (
+            <View key={item.id}>
+              <WorkerOnboardingPartView onNext={() => {}} />
+            </View>
+          );
+        })}
+      </PagerView>
+      <Button
+        style={{marginHorizontal: 16}}
+        mode={'contained'}
+        onPress={onNext}>
+        <Text style={{color: 'white'}}>NEXT</Text>
+      </Button>
     </View>
   );
 };
