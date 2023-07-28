@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import {VSpace} from './components/VSpace';
 import {Controller, useForm} from 'react-hook-form';
-import {PartViewProps} from './components/StepList';
+import {StepViewProps} from './components/StepList';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const styles = StyleSheet.create({
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const AdditionalStep: React.FC<PartViewProps> = ({onNext, isFinalPart}) => {
+const AdditionalStep: React.FC<StepViewProps> = ({onNext, isFinal}) => {
   const {
     control,
     setValue,

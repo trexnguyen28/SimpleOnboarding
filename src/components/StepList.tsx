@@ -11,6 +11,7 @@ import {
 import {Colors} from '@themes';
 
 import {StepIndicator} from './StepIndicator';
+import {StepId, StepViewProps} from '../OnboardingTypes';
 
 const STEP_WIDTH = 64;
 
@@ -44,17 +45,12 @@ const Separator: React.FC<{top: number; active: boolean}> = ({
   return <View style={getStyle()} />;
 };
 
-export interface PartViewProps {
-  onNext: () => void;
-  isFinalPart: boolean;
-}
-
 export type StepConfig = {
-  id: string;
+  id: StepId;
+  stepTitle: string;
   completed: boolean;
   stepNumber: number;
-  stepTitle: string;
-  partView: React.FC<PartViewProps>;
+  stepView: React.FC<StepViewProps>;
 };
 
 interface MultiStepIndicatorsProps {

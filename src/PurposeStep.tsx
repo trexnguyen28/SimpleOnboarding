@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Button, HelperText, Text} from 'react-native-paper';
 import {ICheck} from './assets';
-import {PartViewProps} from './components/StepList';
+import {StepViewProps} from './components/StepList';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,7 +29,7 @@ const PURPOSE_LIST: Array<PURPOSE_OPTION> = [
   {id: 'saving', label: 'Saving'},
 ];
 
-const PurposeStep: React.FC<PartViewProps> = ({onNext}) => {
+const PurposeStep: React.FC<StepViewProps> = ({onNext}) => {
   const [selected, setSelected] = useState<Array<string>>([]);
 
   const onUnSelect = (id: string) => {

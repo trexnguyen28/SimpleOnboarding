@@ -1,69 +1,101 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {Button, HelperText, Text, TextInput} from 'react-native-paper';
-import {VSpace} from './components/VSpace';
+import React, {useContext} from 'react';
 import {useForm, Controller} from 'react-hook-form';
-import {PartViewProps} from './components/StepList';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {Button, HelperText, TextInput} from 'react-native-paper';
+
+import {VSpace} from '@components';
+import {OnboardingContext} from './OnboardingContext';
+import {BasicInfo, StepViewProps} from './OnboardingTypes';
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingTop: 16,
     paddingHorizontal: 12,
-    flex: 1,
   },
   content: {
     flex: 1,
   },
 });
 
-const BasicStep: React.FC<PartViewProps> = ({onNext, isFinalPart}) => {
+export const VN_ID_REGEX = /^(\d{9}|\d{12})$/;
+
+const BasicStep: React.FC<StepViewProps> = ({
+  id,
+  onNext,
+  isFinal,
+  onFinish,
+}) => {
+  const {onboardData, setOnboardData} = useContext(OnboardingContext);
+
   const {
     control,
+    setFocus,
     handleSubmit,
     formState: {errors},
-  } = useForm({
-    defaultValues: {
-      fullName: '',
-      idNumber: '',
-    },
-  });
+  } = useForm({defaultValues: {...onboardData[id]} as BasicInfo});
+
+  const onSubmitSuccess = (data: BasicInfo) => {
+    setOnboardData(id, data);
+    //
+    if (isFinal) {
+      onFinish();
+    } else {
+      onNext();
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <VSpace value={8} />
+      <ScrollView keyboardDismissMode={'on-drag'} style={styles.content}>
         <Controller
+          name={'fullName'}
           control={control}
           rules={{required: true}}
-          render={({field: {onChange, onBlur, value}}) => (
+          render={({field: {...props}}) => (
             <TextInput
-              value={value}
-              onBlur={onBlur}
               mode={'outlined'}
               label={'Full name'}
-              onChangeText={onChange}
+              returnKeyType={'next'}
+              error={!!errors.fullName}
+              onChangeText={props.onChange}
+              onSubmitEditing={() => setFocus('idNumber')}
+              {...props}
             />
           )}
-          name={'fullName'}
         />
-        <VSpace value={8} />
+        {errors.fullName ? (
+          <HelperText style={{paddingHorizontal: 0}} type={'error'}>
+            {'Full name can not be empty'}
+          </HelperText>
+        ) : null}
+        <VSpace />
         <Controller
+          name={'idNumber'}
           control={control}
-          rules={{required: true}}
-          render={({field: {onChange, onBlur, value}}) => (
+          rules={{required: true, pattern: VN_ID_REGEX}}
+          render={({field: {...props}}) => (
             <TextInput
-              value={value}
-              onBlur={onBlur}
               mode={'outlined'}
               label={'Id number'}
-              onChangeText={onChange}
+              returnKeyType={'done'}
+              error={!!errors.idNumber}
+              keyboardType={'number-pad'}
+              onChangeText={props.onChange}
+              {...props}
             />
           )}
-          name={'idNumber'}
         />
-      </View>
-      <Button mode={'contained'} onPress={onNext}>
-        <Text style={{color: 'white'}}>NEXT</Text>
+        {errors.idNumber ? (
+          <HelperText style={{paddingHorizontal: 0}} type={'error'}>
+            {errors.idNumber.type === 'required'
+              ? 'Id number can not be empty'
+              : 'Invalid id format'}
+          </HelperText>
+        ) : null}
+      </ScrollView>
+      <Button mode={'contained'} onPress={handleSubmit(onSubmitSuccess)}>
+        NEXT
       </Button>
     </View>
   );

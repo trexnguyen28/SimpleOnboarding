@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 
 interface VSpaceProps {
-  value: number;
+  value?: number;
   color?: string;
 }
 
