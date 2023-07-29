@@ -9,10 +9,10 @@
      <td>Result</td>
   </tr>
   <tr>
-    <td>![Basic.png](assets%2FBasic.png)</td>
-    <td>![Additional.png](assets%2FAdditional.png)</td>
-    <td>![Purpose.png](assets%2FPurpose.png)</td>
-    <td>![Result.png](assets%2FResult.png)</td>
+    <td><img src="./src/assets/Basic.png"  alt="1" width = 279px height = 496px ></td>
+    <td><img src="./src/assets/Additional.png"  alt="2" width = 279px height = 496px ></td>
+    <td><img src="./src/assets/Purpose.png"  alt="3" width = 279px height = 496px ></td>
+    <td><img src="./src/assets/Result.png"  alt="4" width = 279px height = 496px ></td>
   </tr>
  </table>
 
