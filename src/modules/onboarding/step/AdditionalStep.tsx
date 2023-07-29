@@ -42,6 +42,13 @@ const AdditionalStep: React.FC<StepViewProps> = ({
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+  const isValidDateOfBirth = (value: string) => {
+    const year = new Date(value).getFullYear();
+    const curYear = new Date().getFullYear();
+
+    return curYear - year >= 18;
+  };
+
   const openDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -51,7 +58,7 @@ const AdditionalStep: React.FC<StepViewProps> = ({
   };
 
   const onDatePickerConfirm = (date: Date) => {
-    setValue('dateOfBirth', date.toDateString());
+    setValue('dateOfBirth', date.toDateString(), {shouldValidate: true});
     hideDatePicker();
   };
 
@@ -119,7 +126,7 @@ const AdditionalStep: React.FC<StepViewProps> = ({
         <VSpace />
         <Controller
           control={control}
-          rules={{required: true}}
+          rules={{required: true, validate: isValidDateOfBirth}}
           render={({field: {value}}) => (
             <TextInput
               value={value}
@@ -134,7 +141,9 @@ const AdditionalStep: React.FC<StepViewProps> = ({
         />
         {errors.dateOfBirth ? (
           <HelperText style={styles.error} type={'error'}>
-            Date of birth can not be empty
+            {errors.dateOfBirth.type === 'validate'
+              ? 'We only allow new user over 18 year old'
+              : 'Date of birth can not be empty'}
           </HelperText>
         ) : null}
       </ScrollView>
@@ -144,6 +153,7 @@ const AdditionalStep: React.FC<StepViewProps> = ({
       <DateTimePickerModal
         mode={'date'}
         textColor={'black'}
+        maximumDate={new Date()}
         isDarkModeEnabled={false}
         onConfirm={onDatePickerConfirm}
         onCancel={hideDatePicker}
