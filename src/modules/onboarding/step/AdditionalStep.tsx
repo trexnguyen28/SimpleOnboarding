@@ -80,6 +80,7 @@ const AdditionalStep: React.FC<StepViewProps> = ({
           rules={{required: true, pattern: EMAIL_PATTERN}}
           render={({field: {...props}}) => (
             <TextInput
+              testID={'email'}
               label={'Email'}
               mode={'outlined'}
               returnKeyType={'next'}
@@ -92,7 +93,7 @@ const AdditionalStep: React.FC<StepViewProps> = ({
           )}
         />
         {errors.email ? (
-          <HelperText style={styles.error} type={'error'}>
+          <HelperText testID={'emailError'} style={styles.error} type={'error'}>
             {errors.email.type === 'required'
               ? 'Email can not be empty'
               : 'Invalid email format'}
@@ -105,6 +106,7 @@ const AdditionalStep: React.FC<StepViewProps> = ({
           rules={{required: true, pattern: VN_PHONE_PATTERN}}
           render={({field: {...props}}) => (
             <TextInput
+              testID={'phoneNumber'}
               mode={'outlined'}
               label={'Phone Number'}
               returnKeyType={'next'}
@@ -117,7 +119,10 @@ const AdditionalStep: React.FC<StepViewProps> = ({
           )}
         />
         {errors.phoneNumber ? (
-          <HelperText style={styles.error} type={'error'}>
+          <HelperText
+            testID={'phoneNumberError'}
+            style={styles.error}
+            type={'error'}>
             {errors.phoneNumber.type === 'required'
               ? 'Phone number can not be empty'
               : 'Invalid Vietnamese phone number format'}
@@ -133,7 +138,9 @@ const AdditionalStep: React.FC<StepViewProps> = ({
                 value={value}
                 editable={false}
                 mode={'outlined'}
+                pointerEvents={'none'}
                 label={'Date of birth'}
+                testID={'dateOfBirth'}
                 error={!!errors.dateOfBirth}
               />
             </Pressable>
@@ -141,14 +148,20 @@ const AdditionalStep: React.FC<StepViewProps> = ({
           name={'dateOfBirth'}
         />
         {errors.dateOfBirth ? (
-          <HelperText style={styles.error} type={'error'}>
+          <HelperText
+            testID={'dateOfBirthError'}
+            style={styles.error}
+            type={'error'}>
             {errors.dateOfBirth.type === 'validate'
               ? 'We only allow new user over 18 year old'
               : 'Date of birth can not be empty'}
           </HelperText>
         ) : null}
       </ScrollView>
-      <Button mode={'contained'} onPress={handleSubmit(onSubmitSuccess)}>
+      <Button
+        mode={'contained'}
+        testID={'submitBtn'}
+        onPress={handleSubmit(onSubmitSuccess)}>
         {isFinal ? 'Complete' : 'Next'}
       </Button>
       <DateTimePickerModal

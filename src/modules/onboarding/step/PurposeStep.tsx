@@ -70,6 +70,7 @@ const PurposeStep: React.FC<StepViewProps> = ({
           return (
             <Button
               key={purpose.id}
+              testID={purpose.id}
               labelStyle={styles.label}
               rippleColor={'transparent'}
               contentStyle={styles.btnContent}
@@ -85,6 +86,7 @@ const PurposeStep: React.FC<StepViewProps> = ({
         })}
       </ScrollView>
       <Button
+        testID={'submitBtn'}
         onPress={onSubmit}
         mode={'contained'}
         disabled={selected.length === 0}>

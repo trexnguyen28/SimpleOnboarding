@@ -53,6 +53,7 @@ const BasicStep: React.FC<StepViewProps> = ({
           rules={{required: true}}
           render={({field: {...props}}) => (
             <TextInput
+              testID={'fullName'}
               mode={'outlined'}
               label={'Full name'}
               returnKeyType={'next'}
@@ -64,7 +65,10 @@ const BasicStep: React.FC<StepViewProps> = ({
           )}
         />
         {errors.fullName ? (
-          <HelperText style={{paddingHorizontal: 0}} type={'error'}>
+          <HelperText
+            testID={'fullNameError'}
+            style={{paddingHorizontal: 0}}
+            type={'error'}>
             {'Full name can not be empty'}
           </HelperText>
         ) : null}
@@ -75,6 +79,7 @@ const BasicStep: React.FC<StepViewProps> = ({
           rules={{required: true, pattern: VN_ID_REGEX}}
           render={({field: {...props}}) => (
             <TextInput
+              testID={'idNumber'}
               mode={'outlined'}
               label={'Id number'}
               returnKeyType={'done'}
@@ -86,14 +91,20 @@ const BasicStep: React.FC<StepViewProps> = ({
           )}
         />
         {errors.idNumber ? (
-          <HelperText style={{paddingHorizontal: 0}} type={'error'}>
+          <HelperText
+            testID={'idNumberError'}
+            style={{paddingHorizontal: 0}}
+            type={'error'}>
             {errors.idNumber.type === 'required'
               ? 'Id number can not be empty'
               : 'Invalid Vietnamese id format'}
           </HelperText>
         ) : null}
       </ScrollView>
-      <Button mode={'contained'} onPress={handleSubmit(onSubmitSuccess)}>
+      <Button
+        mode={'contained'}
+        testID={'submitBtn'}
+        onPress={handleSubmit(onSubmitSuccess)}>
         {isFinal ? 'Complete' : 'Next'}
       </Button>
     </View>
