@@ -1,12 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import PagerView from 'react-native-pager-view';
 import {StyleSheet, View} from 'react-native';
 //
-import {StepOverview} from './components';
-import {OnboardingProps, StepModel, StepId} from './types';
 import {Context} from './context';
-import {findStepConfigIndexById, findViewConfigById} from './utils';
 import {ONBOARD_DEFAULT_STATE} from './constants';
+import {StepOverview, ResultModal} from './components';
+import {OnboardingProps, StepModel, StepId} from './types';
+import {findStepConfigIndexById, findViewConfigById} from './utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,11 +19,11 @@ const styles = StyleSheet.create({
 
 const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
   const pagerRef = useRef<PagerView>(null);
-  //
   const [curStepId, setCurStepId] = useState(
     steps.length > 0 ? steps[0].id : 'basic',
   );
   const [onboardData, setOnboardData] = useState(ONBOARD_DEFAULT_STATE);
+  const [isFinished, setIsFinished] = useState(false);
 
   const setStepData = (id: StepId, stepData: StepModel) => {
     setOnboardData(prev => ({...prev, [id]: stepData}));
@@ -49,13 +49,13 @@ const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
     }
   };
 
-  const onFinish = () => {
-    console.log('Do something');
+  const onDismissModal = () => {
+    setIsFinished(false);
   };
 
-  useEffect(() => {
-    console.log({data: onboardData});
-  }, [onboardData]);
+  const onFinish = () => {
+    setIsFinished(true);
+  };
 
   return (
     <Context.Provider value={{onboardData, setOnboardData: setStepData}}>
@@ -90,6 +90,12 @@ const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
             );
           })}
         </PagerView>
+        <ResultModal
+          steps={steps}
+          visible={isFinished}
+          result={onboardData}
+          onDismiss={onDismissModal}
+        />
       </View>
     </Context.Provider>
   );
