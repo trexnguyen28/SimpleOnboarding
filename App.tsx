@@ -3,6 +3,10 @@ import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {MD3LightTheme, PaperProvider, Portal} from 'react-native-paper';
 
 import {Onboarding, OnboardStepConfig, OnboardViewConfig} from '@modules';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,9 +20,11 @@ const App = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={'dark-content'} />
       <PaperProvider theme={MD3LightTheme}>
-        <Portal>
-          <Onboarding steps={OnboardStepConfig} views={OnboardViewConfig} />
-        </Portal>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <Portal>
+            <Onboarding steps={OnboardStepConfig} views={OnboardViewConfig} />
+          </Portal>
+        </SafeAreaProvider>
       </PaperProvider>
     </SafeAreaView>
   );

@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
 import PagerView from 'react-native-pager-view';
-import {StyleSheet, View} from 'react-native';
+import {Keyboard, StyleSheet, View} from 'react-native';
 //
 import {Context} from './context';
 import {ONBOARD_DEFAULT_STATE} from './constants';
@@ -11,6 +11,7 @@ import {findStepConfigIndexById, findViewConfigById} from './utils';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: 12,
   },
   pager: {
     flex: 1,
@@ -54,6 +55,7 @@ const Onboarding: React.FC<OnboardingProps> = ({steps, views}) => {
   };
 
   const onFinish = () => {
+    Keyboard.dismiss();
     setIsFinished(true);
   };
 

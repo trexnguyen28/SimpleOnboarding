@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import {Button, HelperText, TextInput} from 'react-native-paper';
 import {Controller, useForm} from 'react-hook-form';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -128,14 +128,15 @@ const AdditionalStep: React.FC<StepViewProps> = ({
           control={control}
           rules={{required: true, validate: isValidDateOfBirth}}
           render={({field: {value}}) => (
-            <TextInput
-              value={value}
-              editable={false}
-              mode={'outlined'}
-              label={'Date of birth'}
-              onPressOut={openDatePicker}
-              error={!!errors.dateOfBirth}
-            />
+            <Pressable onPress={openDatePicker}>
+              <TextInput
+                value={value}
+                editable={false}
+                mode={'outlined'}
+                label={'Date of birth'}
+                error={!!errors.dateOfBirth}
+              />
+            </Pressable>
           )}
           name={'dateOfBirth'}
         />
